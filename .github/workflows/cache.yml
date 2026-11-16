@@ -1,0 +1,47 @@
+name: nuget-cache
+on: push
+permissions:
+  contents: write
+jobs:
+  cache:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: restore
+        run: |
+          set -x
+          export NUGET_PACKAGES=$PWD/pk
+          mkdir w && cd w
+          dotnet new console -n a -o a --framework net10.0
+          cd a
+          for p in xunit.v3 xunit.runner.visualstudio Microsoft.NET.Test.Sdk NSubstitute \
+                   Avalonia Avalonia.Desktop Avalonia.Themes.Fluent Avalonia.Fonts.Inter Avalonia.Headless Avalonia.Skia \
+                   Microsoft.Extensions.Hosting Microsoft.Extensions.Hosting.Systemd Microsoft.Extensions.Hosting.WindowsServices \
+                   System.Text.Json Microsoft.Bcl.AsyncInterfaces Microsoft.SourceLink.GitHub \
+                   CSharpOpenHABRestClient CSharpOpenHABTestSuite xunit xunit.runner.console coverlet.collector; do
+            dotnet add package $p || true
+          done
+          cat a.csproj
+          dotnet restore
+          for r in linux-x64 linux-arm64 win-x64; do dotnet restore -r $r || true; done
+          dotnet new classlib -n b -o ../b --framework netstandard2.1
+          cd ../b && dotnet add package System.Text.Json && dotnet add package Microsoft.Bcl.AsyncInterfaces && dotnet restore
+          cd ../a
+          dotnet new console -n c -o ../c --framework net8.0 && cd ../c && dotnet add package xunit.v3 && dotnet add package Microsoft.NET.Test.Sdk && dotnet add package xunit.runner.visualstudio && dotnet add package NSubstitute && dotnet add package System.Text.Json --version 8.0.5 && dotnet restore
+          dotnet --info > ../../dotnet-info.txt
+      - name: feed
+        run: |
+          mkdir feed
+          find pk -name '*.nupkg' -exec cp {} feed/ \;
+          ls feed > feed-liste.txt; du -sh feed
+          tar cf - feed | split -b 90m - feed.tar.
+          ls -la feed.tar.*
+          git config user.name ci; git config user.email ci@example.invalid
+          git add feed.tar.* feed-liste.txt dotnet-info.txt
+          git commit -m "nuget feed"
+          git push
