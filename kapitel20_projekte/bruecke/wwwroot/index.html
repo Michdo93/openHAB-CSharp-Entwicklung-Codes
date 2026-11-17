@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!-- Kapitel 20: Die Seite zur Brücke – sie kennt nur /api, nicht openHAB -->
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Haus</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 2rem auto; }
+    li { display: flex; justify-content: space-between; padding: .4rem 0;
+         border-bottom: 1px solid #ddd; }
+    button { margin-left: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Haus</h1>
+  <ul id="liste"></ul>
+  <script>
+    const liste = document.getElementById('liste');
+    const zeilen = {};
+    async function laden() {
+      const items = await (await fetch('/api/items')).json();
+      for (const i of items) {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${i.label || i.name}</span><span><b></b></span>`;
+        if (i.typ === 'Switch') {
+          const knopf = document.createElement('button');
+          knopf.textContent = 'schalten';
+          knopf.onclick = () => fetch('/api/items/' + i.name, {
+            method: 'POST', body: zeilen[i.name].textContent === 'ON' ? 'OFF' : 'ON' });
+          li.lastChild.append(knopf);
+        }
+        zeilen[i.name] = li.querySelector('b');
+        zeilen[i.name].textContent = i.state;
+        liste.append(li);
+      }
+    }
+    // Live: die Brücke reicht jede Änderung als Server-Sent Event weiter
+    laden().then(() => {
+      new EventSource('/api/ereignisse').addEventListener('zustand', e => {
+        const i = JSON.parse(e.data);
+        if (zeilen[i.name]) zeilen[i.name].textContent = i.state;
+      });
+    });
+  </script>
+</body>
+</html>

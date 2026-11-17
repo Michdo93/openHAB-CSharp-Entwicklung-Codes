@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <!-- Kapitel 18: ohgeraet – der Raspberry Pi als Gerät für openHAB (Worker-Dienst) -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>OhGeraet</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CSharpOpenHABRestClient" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="10.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices"
+                      Version="10.0.15" />
+    <PackageReference Include="System.Device.Gpio" Version="4.2.0" />
+  </ItemGroup>
+</Project>

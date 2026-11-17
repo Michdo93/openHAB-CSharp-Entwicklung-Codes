@@ -1,0 +1,32 @@
+# systemd-Unit für ohgeraet – den Raspberry Pi als Gerät
+#   dotnet publish kapitel18_geraet -c Release -r linux-arm64 --self-contained -o publish-pi
+#   sudo cp -r publish-pi /opt/ohgeraet
+#   sudo cp ohgeraet.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now ohgeraet
+#   journalctl -u ohgeraet -f
+[Unit]
+Description=Raspberry Pi als Gerät für openHAB (REST API, C#)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# notify: der Dienst meldet systemd, wann er bereit ist (AddSystemd)
+Type=notify
+User=ohgeraet
+# GPIO: Mitglied der Gruppe gpio (Raspberry Pi OS)
+SupplementaryGroups=gpio
+Environment=OPENHAB_URL=http://openhab:8080
+# Datei mit einer Zeile OPENHAB_TOKEN=oh.…, nur für root lesbar
+EnvironmentFile=/etc/ohgeraet.env
+ExecStart=/opt/ohgeraet/ohgeraet --intervall=30 --ausgang=gpiochip0:17
+Restart=on-failure
+RestartSec=10
+# Dem Dienst nur erlauben, was er braucht
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+DeviceAllow=/dev/gpiochip0 rw
+
+[Install]
+WantedBy=multi-user.target

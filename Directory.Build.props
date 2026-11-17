@@ -1,0 +1,11 @@
+<Project>
+  <!-- Gilt für alle Beispiele, auch für "dotnet run datei.cs" (dateibasierte Programme). -->
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Dateibasierte Programme sind sonst für Native AOT vorbereitet; die Beispiele
+         übergeben anonyme Objekte als JSON, das braucht Reflection. -->
+    <PublishAot>false</PublishAot>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+</Project>

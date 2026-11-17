@@ -1,0 +1,40 @@
+<!-- Kapitel 17: Die View – nur Darstellung und Bindungen, keine Logik -->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OhDash.ViewModels"
+        x:Class="OhDash.Views.HauptFenster" x:DataType="vm:DashboardViewModel"
+        Width="640" Height="340" FontSize="15">
+  <DockPanel Margin="12">
+    <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Margin="0,8,0,0"
+               Foreground="#555" />
+    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="8"
+                Margin="0,8,0,0">
+      <Button Content="Schalten" Command="{Binding SchaltenBefehl}" />
+      <Button Content="Heller +10" Command="{Binding HellerBefehl}" />
+      <Button Content="Dunkler −10" Command="{Binding DunklerBefehl}" />
+    </StackPanel>
+    <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding Auswahl}"
+             DoubleTapped="Doppelklick">
+      <ListBox.Styles>
+        <Style Selector="ListBoxItem">
+          <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+      </ListBox.Styles>
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="vm:ItemViewModel">
+          <Grid ColumnDefinitions="130,*,120,130">
+            <TextBlock Text="{Binding Label}" FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" Text="{Binding Name}" Foreground="#777"
+                       VerticalAlignment="Center" />
+            <ProgressBar Grid.Column="2" Value="{Binding Prozent}" Maximum="100"
+                         Margin="0,0,12,0"
+                         IsVisible="{Binding IstSchaltbar}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="3" Text="{Binding Anzeige}" HorizontalAlignment="Right"
+                       VerticalAlignment="Center" />
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </DockPanel>
+</Window>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Kapitel 19: Tests mit xUnit v3, NSubstitute und csharp-openhab-test-suite -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" Version="4.0.3" />
+    <PackageReference Include="NSubstitute" Version="6.2.0" />
+    <PackageReference Include="CSharpOpenHABTestSuite" Version="2.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- die getesteten Programme aus Kapitel 17 und 18 -->
+    <ProjectReference Include="../kapitel17_dashboard/ohdash.csproj" />
+    <ProjectReference Include="../kapitel18_geraet/ohgeraet.csproj" />
+    <!-- der Vorab-Test ist ein eigenes dateibasiertes Programm -->
+    <Compile Remove="vorabtest/**" />
+  </ItemGroup>
+</Project>

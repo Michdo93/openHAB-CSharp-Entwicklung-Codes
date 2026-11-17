@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/kapitel17_dashboard/">
+    <Project Path="kapitel17_dashboard/ohdash.csproj" />
+  </Folder>
+  <Folder Name="/kapitel18_geraet/">
+    <Project Path="kapitel18_geraet/ohgeraet.csproj" />
+  </Folder>
+  <Folder Name="/kapitel19_tests/">
+    <Project Path="kapitel19_tests/kapitel19_tests.csproj" />
+  </Folder>
+  <Folder Name="/kapitel20_projekte/">
+    <Project Path="kapitel20_projekte/bruecke/bruecke.csproj" />
+    <Project Path="kapitel20_projekte/ohctl/ohctl.csproj" />
+  </Folder>
+</Solution>

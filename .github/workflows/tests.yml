@@ -1,0 +1,40 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Projekte übersetzen (Kapitel 17 bis 20)
+        run: dotnet build openHAB-CSharp.slnx -c Release
+      - name: Alle Einzeldatei-Programme übersetzen (Kapitel 8 bis 16, 19)
+        run: |
+          for f in kapitel*/*.cs kapitel19_tests/vorabtest/*.cs; do
+            case "$f" in kapitel1[789]*/[A-Z]*|kapitel19_tests/*Tests.cs) continue ;; esac
+            echo "::group::$f"; dotnet build "$f" || exit 1; echo "::endgroup::"
+          done
+      - name: Unit-Tests (ohne openHAB)
+        run: dotnet test --project kapitel19_tests -c Release -- --filter-trait "Art=unit"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: openHAB mit der Übungskonfiguration
+        run: bash .github/openhab/start.sh
+        env:
+          EXERCISE_CONF: ${{ github.workspace }}/openhab-conf
+      - name: Vorab-Test und Integrationstests
+        run: |
+          dotnet run kapitel19_tests/vorabtest/vorabtest.cs
+          dotnet test --project kapitel19_tests -c Release
+      - name: openHAB-Protokoll
+        if: failure()
+        run: tail -n 100 ~/openhab/openhab.out ~/openhab/userdata/logs/openhab.log || true

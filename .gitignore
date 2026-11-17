@@ -1,0 +1,14 @@
+.env
+bin/
+obj/
+artifacts/
+*.user
+.vs/
+.vscode/
+.idea/
+TestResults/
+nupkg/
+kapitel17_dashboard/ohdash.png
+# Unity
+kapitel20_projekte/unity/**/Library/
+kapitel20_projekte/unity/**/Temp/
