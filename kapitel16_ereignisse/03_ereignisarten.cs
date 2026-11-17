@@ -1,5 +1,5 @@
 // Kapitel 16: Ereignisarten – Items, Things und Links in einem Strom
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using OpenHABRestClient;
 using System.Text.Json.Nodes;
 

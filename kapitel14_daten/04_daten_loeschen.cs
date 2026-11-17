@@ -1,5 +1,5 @@
 // Kapitel 14: Daten löschen – einen Zeitraum entfernen
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using OpenHABRestClient;
 using System.Globalization;
 

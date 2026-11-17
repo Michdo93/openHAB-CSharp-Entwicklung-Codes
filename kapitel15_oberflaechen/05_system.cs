@@ -1,5 +1,5 @@
 // Kapitel 15: System – Dienste, Log-Level, Zugänge, Symbole und Einheiten
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using OpenHABRestClient;
 
 var url = Environment.GetEnvironmentVariable("OPENHAB_URL") ?? "http://127.0.0.1:8080";

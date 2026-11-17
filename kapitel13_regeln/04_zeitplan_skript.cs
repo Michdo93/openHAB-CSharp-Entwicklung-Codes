@@ -1,5 +1,5 @@
 // Kapitel 13: Zeitpläne und Skripte – Cron-Trigger, Rules DSL, Simulation
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using OpenHABRestClient;
 using System.Globalization;
 
@@ -45,7 +45,7 @@ string[] tag = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa" };
 foreach (var e in simulation.List().Where(e => e.Str("rule.uid") == Uid))
 {
     // openHAB liefert z. B. "Nov 16, 2026, 7:30:00 AM" (mit schmalem Leerzeichen U+202F)
-    var text = e.Str("date").Replace(' ', ' ');
+    var text = e.Str("date").Replace('\u202F', ' ');
     var w = DateTime.ParseExact(text, "MMM d, yyyy, h:mm:ss tt",
                                 CultureInfo.InvariantCulture);
     Console.WriteLine($"  {tag[(int)w.DayOfWeek]} {w:dd.MM., HH:mm}  {e.Str("rule.name")}");

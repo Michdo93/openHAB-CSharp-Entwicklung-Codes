@@ -3,7 +3,7 @@
 Beispiele zum Buch „openHAB & C#-Entwicklung“ (Reihe „openHAB REST API“). Alle Programme
 verwenden [csharp-openhab-rest-client](https://github.com/Michdo93/csharp-openhab-rest-client)
 und, für die Tests, [csharp-openhab-test-suite](https://github.com/Michdo93/csharp-openhab-test-suite)
-in Version 2.0.0 – `dotnet` lädt beide beim ersten Start von NuGet.
+in Version 2.0.1 – `dotnet` lädt beide beim ersten Start von NuGet.
 
 ## Voraussetzungen
 
@@ -26,7 +26,7 @@ cp .env.example .env                 # Adresse und Token eintragen
 
 Die Beispiele der Kapitel 8 bis 16 sind **dateibasierte Programme** (.NET 10): eine einzelne
 `.cs`-Datei, die `dotnet run datei.cs` ohne Projektdatei übersetzt und startet. Die Zeile
-`#:package CSharpOpenHABRestClient@2.0.0` am Anfang ersetzt die Projektdatei.
+`#:package CSharpOpenHABRestClient@2.0.1` am Anfang ersetzt die Projektdatei.
 `starte.sh`/`starte.ps1` laden vorher `.env`; von Hand geht es so:
 
 ```bash

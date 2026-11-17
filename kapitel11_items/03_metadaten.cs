@@ -1,5 +1,5 @@
 // Kapitel 11: Metadaten – Anzeige, Ablauf und eigene Daten
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using System.Text.Json.Nodes;
 using OpenHABRestClient;
 

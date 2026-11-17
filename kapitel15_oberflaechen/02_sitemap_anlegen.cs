@@ -1,5 +1,5 @@
 // Kapitel 15: Eine Sitemap per REST anlegen – als UI-Komponente
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using OpenHABRestClient;
 using System.Text.Json.Nodes;
 

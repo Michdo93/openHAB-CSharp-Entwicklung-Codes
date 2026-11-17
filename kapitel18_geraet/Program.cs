@@ -15,6 +15,8 @@ builder.Logging.AddSimpleConsole(o =>
     o.SingleLine = true;
     o.TimestampFormat = "HH:mm:ss ";
 });
+// Start- und Stoppmeldungen des Hosts nur bei Problemen
+builder.Logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.Warning);
 
 var config = builder.Configuration;
 var optionen = new GeraetOptionen(config.GetValue("intervall", 30),

@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3" Version="4.0.3" />
     <PackageReference Include="NSubstitute" Version="6.2.0" />
-    <PackageReference Include="CSharpOpenHABTestSuite" Version="2.0.0" />
+    <PackageReference Include="CSharpOpenHABTestSuite" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
     <!-- die getesteten Programme aus Kapitel 17 und 18 -->

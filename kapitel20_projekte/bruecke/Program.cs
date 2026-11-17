@@ -3,9 +3,10 @@
 // Brücke erlaubt nur, was sie erlauben will: Items einer Gruppe lesen und schalten.
 //   GET  /api/items              Items der Gruppe (Konfiguration "Gruppe", Vorgabe gHaus)
 //   POST /api/items/{name}       Command als Text, nur für Items der Gruppe
-//   GET  /api/ereignisse         Zustandsänderungen als Server-Sent Events
+//   GET  /api/ereignisse         Zustandsänderungen dieser Items als Server-Sent Events
 using System.Net.ServerSentEvents;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Nodes;
 using OpenHABRestClient;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,17 +20,13 @@ app.UseDefaultFiles();                               // wwwroot/index.html für 
 app.UseStaticFiles();
 
 app.MapGet("/api/items", async (OpenHABClient c) =>
-{
-    var r = await new Items(c).GetItemAsync(gruppe, metadata: "", recursive: true);
-    if (r.IsError()) return Results.Problem(r.ErrorMessage(), statusCode: 502);
-    var liste = new List<ItemInfo>();
-    Sammeln(r.List("members"), liste);
-    return Results.Ok(liste);                        // ASP.NET Core serialisiert nach JSON
-});
+    await ItemsDerGruppe(c) is { } liste
+        ? Results.Ok(liste)                          // ASP.NET Core serialisiert nach JSON
+        : Results.Problem("openHAB nicht erreichbar", statusCode: 502));
 
 app.MapPost("/api/items/{name}", async (string name, HttpRequest req, OpenHABClient c) =>
 {
-    if (!await GehoertZurGruppe(c, name))
+    if (await ItemsDerGruppe(c) is not { } liste || !liste.Exists(i => i.Name == name))
         return Results.NotFound(new { error = "unbekanntes Item" });
     var befehl = (await new StreamReader(req.Body).ReadToEndAsync()).Trim();
     var r = await new Items(c).SendCommandAsync(name, befehl, source: "bruecke");
@@ -43,20 +40,17 @@ app.MapGet("/api/ereignisse", (OpenHABClient c, CancellationToken ct) =>
 
 app.Run();
 
-async IAsyncEnumerable<SseItem<ItemInfo>> Aenderungen(OpenHABClient c,
-    [EnumeratorCancellation] CancellationToken ct)
+// Alle Items der Gruppe, Untergruppen aufgelöst – null, wenn openHAB nicht antwortet
+async Task<List<ItemInfo>?> ItemsDerGruppe(OpenHABClient c)
 {
-    using var strom = await new ItemEvents(c)
-        .ItemStateChangedEventAsync(cancellationToken: ct);
-    await foreach (var e in strom.EventsAsync(cancellationToken: ct))   // bis Browser geht
-    {
-        var name = e.Str("topic").Split('/')[2];
-        var info = new ItemInfo(name, "", "", e.Str("payload.value"));
-        yield return new SseItem<ItemInfo>(info, eventType: "zustand");
-    }
+    var r = await new Items(c).GetItemAsync(gruppe, metadata: "", recursive: true);
+    if (r.IsError()) return null;
+    var liste = new List<ItemInfo>();
+    Sammeln(r.List("members"), liste);
+    return liste;
 }
 
-static void Sammeln(System.Text.Json.Nodes.JsonArray mitglieder, List<ItemInfo> liste)
+static void Sammeln(JsonArray mitglieder, List<ItemInfo> liste)
 {
     foreach (var i in mitglieder)
         if (i.Str("type") == "Group") Sammeln(i.List("members"), liste);
@@ -65,10 +59,20 @@ static void Sammeln(System.Text.Json.Nodes.JsonArray mitglieder, List<ItemInfo> 
                                    i.Str("state")));
 }
 
-async Task<bool> GehoertZurGruppe(OpenHABClient c, string name)
+async IAsyncEnumerable<SseItem<Zustand>> Aenderungen(OpenHABClient c,
+    [EnumeratorCancellation] CancellationToken ct)
 {
-    var r = await new Items(c).GetItemAsync(name, metadata: "", parents: true);
-    return !r.IsError() && r.Json().Contains($"\"name\":\"{gruppe}\"");
+    var erlaubt = (await ItemsDerGruppe(c) ?? []).Select(i => i.Name).ToHashSet();
+    using var strom = await new ItemEvents(c)
+        .ItemStateChangedEventAsync(cancellationToken: ct);
+    await foreach (var e in strom.EventsAsync(cancellationToken: ct))   // bis Browser geht
+    {
+        var name = e.Str("topic").Split('/')[2];
+        if (!erlaubt.Contains(name)) continue;       // nur Items der Gruppe
+        var z = new Zustand(name, e.Str("payload.value"));
+        yield return new SseItem<Zustand>(z, eventType: "zustand");
+    }
 }
 
 record ItemInfo(string Name, string Label, string Typ, string State);
+record Zustand(string Name, string State);

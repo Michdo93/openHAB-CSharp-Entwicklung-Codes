@@ -1,5 +1,5 @@
 // Kapitel 15: Eine Sitemap lesen – Widgets rekursiv ausgeben
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using OpenHABRestClient;
 using System.Text.Json.Nodes;
 

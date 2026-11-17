@@ -1,6 +1,6 @@
 // Kapitel 19: Vorab-Test – ist die Übungskonfiguration geladen? In Sekunden.
 //   dotnet run kapitel19_tests/vorabtest/vorabtest.cs
-#:package CSharpOpenHABTestSuite@2.0.0
+#:package CSharpOpenHABTestSuite@2.0.1
 using OpenHABRestClient;
 using OpenHABTestSuite;
 

@@ -1,5 +1,5 @@
 // Kapitel 11: Ein Item anlegen, lesen, ändern und löschen
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using OpenHABRestClient;
 using System.Text.Json.Nodes;
 

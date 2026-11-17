@@ -8,9 +8,11 @@ using OpenHABRestClient;
 namespace OhGeraet;
 
 public sealed class GeraetDienst(OpenHABClient client, Geraet geraet, IMesswerte messwerte,
-                                 GeraetOptionen optionen, ILogger<GeraetDienst> log)
+                                 GeraetOptionen optionen, ILoggerFactory logs)
     : BackgroundService
 {
+    readonly ILogger log = logs.CreateLogger("ohgeraet");   // kurzer Name im Log
+
     protected override async Task ExecuteAsync(CancellationToken stop)
     {
         var pause = TimeSpan.FromSeconds(1);
@@ -58,7 +60,7 @@ public sealed class GeraetDienst(OpenHABClient client, Geraet geraet, IMesswerte
             var item = e.Str("topic").Split('/')[2];
             var befehl = e.Str("payload.value");
             if (geraet.Command(item, befehl) is { } antwort)
-                log.LogInformation("Command {Item} <- {Befehl}: {Antwort}",
+                log.LogInformation("{Item} <- {Befehl}: {Antwort}",
                                    item, befehl, antwort);
         }
     }

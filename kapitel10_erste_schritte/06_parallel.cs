@@ -1,5 +1,5 @@
 // Kapitel 10: Mehrere Anfragen gleichzeitig – ein Client, async und Task.WhenAll
-#:package CSharpOpenHABRestClient@2.0.0
+#:package CSharpOpenHABRestClient@2.0.1
 using System.Diagnostics;
 using OpenHABRestClient;
 
